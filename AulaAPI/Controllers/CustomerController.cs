@@ -1,52 +1,41 @@
 ﻿using AulaAPI.Models;
 using AulaAPI.Querys;
 using AulaAPI.Statcs;
-using Microsoft.AspNetCore.Http;
+using Domain.Entity;
 using Microsoft.AspNetCore.Mvc;
+using Services.Customer.Handlers;
+using Services.Customer.Requests;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace AulaAPI.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    public class ClientesController : ControllerBase
+    public class CustomerController : ControllerBase
     {
-        [HttpGet]
-        public IActionResult Get([FromHeader] string token)
-        {
-            if (token != Token.Get)
-                return Unauthorized("Você nao tem autorização para acessar este recurso");
 
-            Cliente cliente = new Cliente
-            {
-                Id = Guid.NewGuid(),
-                Nome = "UCHOA MURADA SA SILVA"
-            };
-            return Ok(cliente);
+        private readonly ICustomerHandler _handler;
+
+        public CustomerController(ICustomerHandler handler)
+        {
+            _handler = handler;
         }
 
         [HttpGet]
-        [Route("{id}")]
-        public IActionResult Get([FromRoute] Guid id, [FromQuery] ClienteQuery query, [FromHeader] string token)
+        public IActionResult Get([FromHeader] string token, [FromQuery] CustomerRequest request)
         {
             if (token != Token.Get)
                 return Unauthorized("Você nao tem autorização para acessar este recurso");
-
-            Cliente cliente = new Cliente
-            {
-                Id = Guid.NewGuid(),
-                Nome = "UCHOA MURADA SA SILVA"
-            };
-            return Ok(cliente);
+            var response = _handler.Handler(request);
+            return Ok(response);
         }
+
 
         [HttpPost]
-        public IActionResult Post([FromHeader] string token, [FromBody] Cliente cliente)
+        public IActionResult Post([FromHeader] string token, [FromBody] Customer customer)
         {
-            return Ok();
+            return Ok(customer);
         }
 
         [HttpPut]
