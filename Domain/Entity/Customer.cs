@@ -37,7 +37,6 @@ namespace Domain.Entity
             Validator erro = new Validator(property, description, TypeValidator.ERROR);
             Errors.Add(erro);
         }
-
         public void Save()
         {
             StartDate = DateTime.Today;
@@ -49,7 +48,6 @@ namespace Domain.Entity
                 AddError(nameof(Name), "put at least 3 characters");
 
         }
-
         public void Update()
         {
             if (string.IsNullOrEmpty(Name))
