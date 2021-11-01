@@ -66,7 +66,7 @@ namespace AulaAPI
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.)
             app.UseSwaggerUI(c =>
             {
-                c.RoutePrefix = "Swagger";
+                c.RoutePrefix = string.Empty;
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
         }
