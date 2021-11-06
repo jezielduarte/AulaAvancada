@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Domain
 {
-    public class Validator
+    public class BrokenRoles
     {
-        public Validator(string property, string description, TypeValidator type)
+        public BrokenRoles(string property, string description, TypeValidator type)
         {
             Property = property;
             Description = description;

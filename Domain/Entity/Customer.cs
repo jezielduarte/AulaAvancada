@@ -13,7 +13,7 @@ namespace Domain.Entity
             Name = name;
             City = city;
             PostCod = postCod;
-            Errors = new List<Validator>();
+            Errors = new List<BrokenRoles>();
         }
 
         public Guid Id { get; protected set; }
@@ -27,17 +27,17 @@ namespace Domain.Entity
         public DateTime StartDate { get; protected set; }
 
         [NotMapped]
-        public List<Validator> Errors { get; protected set; }
+        public List<BrokenRoles> Errors { get; protected set; }
         
         [NotMapped]
         public Boolean HasErrors => Errors.Count > 0;
 
         public void AddError(string property, string description)
         {
-            Validator erro = new Validator(property, description, TypeValidator.ERROR);
+            BrokenRoles erro = new BrokenRoles(property, description, TypeValidator.ERROR);
             Errors.Add(erro);
         }
-        public void Save()
+        public void ReleaseSave()
         {
             StartDate = DateTime.Today;
 
@@ -48,7 +48,7 @@ namespace Domain.Entity
                 AddError(nameof(Name), "put at least 3 characters");
 
         }
-        public void Update()
+        public void ReleaseUpdate()
         {
             if (string.IsNullOrEmpty(Name))
                 AddError(nameof(Name), "name can not null");

@@ -1,6 +1,7 @@
 using Data.Repository;
 using Data.SqLite;
 using Domain.Repository;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Services.Customer.Handlers;
+using Services.Customers.Handlers;
+using Services.Customers.Requests;
+using Services.Customers.Responses;
+using System.Reflection;
 
 namespace AulaAPI
 {
@@ -24,6 +28,7 @@ namespace AulaAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -32,8 +37,12 @@ namespace AulaAPI
             });
 
             services.AddTransient<ICustomerRepository, CustomerRepository>();
-            services.AddDbContext<ContextSQLite>(opt=> opt.UseSqlite("name=ConexaoSqlite:SqliteConnectionString"));
-            services.AddTransient<ICustomerHandler, CustomerHandler>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddDbContext<ContextSQLite>(opt => opt.UseSqlite("name=ConexaoSqlite:SqliteConnectionString"));
+            
+            services.AddTransient<IRequestHandler<CustomerRequest, CustomerResponse>, CustomerHandler>();
+            services.AddTransient<IRequestHandler<CreateCustomerRequest, CreateCustomerResponse>, CreateCustomerHandler>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,6 +56,8 @@ namespace AulaAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

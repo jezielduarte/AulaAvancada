@@ -1,14 +1,17 @@
 ﻿using Domain.Repository;
-using Services.Customer.Requests;
-using Services.Customer.Responses;
+using MediatR;
+using Services.Customers.Requests;
+using Services.Customers.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace Services.Customer.Handlers
+namespace Services.Customers.Handlers
 {
-    public class CustomerHandler : ICustomerHandler
+    public class CustomerHandler : IRequestHandler<CustomerRequest, CustomerResponse>
     {
         ICustomerRepository _repository;
 
@@ -17,16 +20,18 @@ namespace Services.Customer.Handlers
             _repository = repository;
         }
 
-        public CustomerResponse Handler(CustomerRequest request)
+        public Task<CustomerResponse> Handle(CustomerRequest request, CancellationToken cancellationToken)
         {
             List<Domain.Entity.Customer> customers = _repository.GetByName(request.Name, request.Page, request.ItensPerPage);
-            return new CustomerResponse
+
+            CustomerResponse response = new CustomerResponse
             {
                 Data = customers.Select(x => new CustomerResponseItem { City = x.City, Id = x.Id, Name = x.Name, PostCod = x.PostCod }).ToList(),
                 Page = 1,
                 PerPage = 20,
                 LastPage = 10
             };
+            return Task.FromResult(response);
         }
     }
 }

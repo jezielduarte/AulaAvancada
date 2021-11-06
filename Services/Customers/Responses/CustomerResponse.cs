@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Services.Customer.Responses
+namespace Services.Customers.Responses
 {
     public class CustomerResponseItem
     {

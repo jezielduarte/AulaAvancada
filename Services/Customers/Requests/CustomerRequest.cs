@@ -1,10 +1,12 @@
-﻿using System;
+﻿using MediatR;
+using Services.Customers.Responses;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Services.Customer.Requests
+namespace Services.Customers.Requests
 {
-    public class CustomerRequest
+    public class CustomerRequest : IRequest<CustomerResponse>
     {
         public string Name { get; set; }
         public int Page { get; set; }

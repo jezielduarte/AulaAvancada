@@ -1,10 +1,8 @@
 ﻿using AulaAPI.Models;
-using AulaAPI.Querys;
 using AulaAPI.Statcs;
-using Domain.Entity;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Services.Customer.Handlers;
-using Services.Customer.Requests;
+using Services.Customers.Requests;
 using System;
 
 
@@ -15,27 +13,26 @@ namespace AulaAPI.Controllers
     public class CustomerController : ControllerBase
     {
 
-        private readonly ICustomerHandler _handler;
+        private readonly IMediator _mediator;
 
-        public CustomerController(ICustomerHandler handler)
+        public CustomerController(IMediator mediator)
         {
-            _handler = handler;
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public IActionResult Get([FromHeader] string token, [FromQuery] CustomerRequest request)
+        public IActionResult Get([FromQuery] CustomerRequest request)
         {
-            if (token != Token.Get)
-                return Unauthorized("Você nao tem autorização para acessar este recurso");
-            var response = _handler.Handler(request);
+            var response = _mediator.Send(request);
             return Ok(response);
         }
 
 
         [HttpPost]
-        public IActionResult Post([FromHeader] string token, [FromBody] Customer customer)
+        public IActionResult Post([FromBody] CreateCustomerRequest request)
         {
-            return Ok(customer);
+            var response = _mediator.Send(request).Result;
+            return StatusCode(response.StatusCode, response);
         }
 
         [HttpPut]
