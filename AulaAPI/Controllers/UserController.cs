@@ -1,8 +1,11 @@
-﻿using Domain.Entity;
+﻿using AulaAPI.Statcs;
+using Domain.Entity;
 using Domain.Repository;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Services.Customers.Requests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,50 +18,34 @@ namespace AulaAPI.Controllers
     [Route("api/v1/[controller]")]
     public class UserController : ControllerBase
     {
-        IUserRepository _repository;
+        IMediator _mediator;
 
-        public UserController(IUserRepository repository)
+        public UserController(IMediator mediator)
         {
-            _repository = repository;
+            _mediator = mediator;
         }
 
         [HttpPost]
         [Authorize]
-        public IActionResult Post(User user)
+        public IActionResult Post(CreateUserRequest request)
         {
-            _repository.Save(user);
-            return Ok();
+            var response = _mediator.Send(request).Result;
+            return StatusCode(response.StatusCode, response);
         }
 
         [HttpPost]
         [Route("login")]
-        public IActionResult Login(string user, string senha)
+        public IActionResult GenerateToken(string user, string pass)
         {
-            //1º passo gerar claim: ATRIBUTOS
-            List<Claim> clains = new List<Claim>();
-            clains.Add(new Claim(ClaimTypes.Name, user));
-            clains.Add(new Claim(ClaimTypes.Email, "email@email.com"));
-
-            //Permissoes
-            clains.Add(new Claim(ClaimTypes.Role, nameof(Domain.Entity.User.CreateCustomer)));
-            clains.Add(new Claim(ClaimTypes.Role, nameof(Domain.Entity.User.DeleteCustomer)));
-            clains.Add(new Claim(ClaimTypes.Role, nameof(Domain.Entity.User.UpdateCustomer)));
-
-            //2º passo gerar a identidade
-            ClaimsIdentity identity = new ClaimsIdentity(clains, "User", ClaimTypes.Name, ClaimTypes.Role);
-
-            ClaimsPrincipal principal = new ClaimsPrincipal(new[] { identity });
-
-            HttpContext.SignInAsync(principal);
-
-            return Ok();
+            return Ok(TokenService.GenerateToken(new User(user,pass)));
         }
 
-        //[HttpPost]
-        //public IActionResult Logout()
-        //{
-        //    HttpContext.SignOutAsync();
-        //    return Ok();
-        //}
+        [HttpPost]
+        [Route("logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.SignOutAsync();
+            return Ok();
+        }
     }
 }
