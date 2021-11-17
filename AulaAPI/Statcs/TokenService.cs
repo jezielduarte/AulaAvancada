@@ -20,16 +20,27 @@ namespace AulaAPI.Statcs
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(KEY);
+
+            List<Claim> listClaims = new List<Claim>();
+            listClaims.Add(new Claim(ClaimTypes.Name, user.Login.ToString()));
+            if (user.CreateCustomer)
+            {
+                listClaims.Add(new Claim(ClaimTypes.Role, nameof(User.CreateCustomer)));
+            }
+            if (user.DeleteCustomer)
+            {
+                listClaims.Add(new Claim(ClaimTypes.Role, nameof(User.DeleteCustomer)));
+            }
+            if (user.UpdateCustomer)
+            {
+                listClaims.Add(new Claim(ClaimTypes.Role, nameof(User.UpdateCustomer)));
+            }
+
+            var claimIdentity = new ClaimsIdentity(listClaims);
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new Claim(ClaimTypes.Name, user.Login.ToString()),
-                    new Claim(ClaimTypes.Role, nameof(User.CreateCustomer)),
-                    new Claim(ClaimTypes.Role, nameof(User.DeleteCustomer)),
-                    new Claim(ClaimTypes.Role, nameof(User.UpdateCustomer))
-                }),
-
+                Subject = claimIdentity,
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };

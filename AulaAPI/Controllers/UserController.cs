@@ -37,7 +37,15 @@ namespace AulaAPI.Controllers
         [Route("login")]
         public IActionResult GenerateToken(string user, string pass)
         {
-            return Ok(TokenService.GenerateToken(new User(user,pass)));
+            return Ok(
+                    new
+                    {
+                        StatusCode = 200,
+                        Token = TokenService.GenerateToken(new User(user, pass, true)),
+                        User = user,
+                        ExpireDate = DateTime.Now.AddHours(2)
+                    }
+                );
         }
 
         [HttpPost]

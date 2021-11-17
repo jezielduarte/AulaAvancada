@@ -46,6 +46,8 @@ namespace AulaAPI
             services.AddTransient<IRequestHandler<CreateCustomerRequest, CreateCustomerResponse>, CreateCustomerHandler>();
             services.AddTransient<IRequestHandler<CreateUserRequest, CreateUserResponse>, CreateUserHandler>();
 
+
+
             //Adicionado autenticacao JWT
             services.AddAuthentication(x =>
             {
