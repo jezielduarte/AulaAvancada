@@ -1,6 +1,7 @@
 using AulaAPI.Statcs;
 using Data.Repository;
 using Data.SqLite;
+using Data.UnityOfWork;
 using Domain.Repository;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -15,6 +16,9 @@ using Microsoft.OpenApi.Models;
 using Services.Customers.Handlers;
 using Services.Customers.Requests;
 using Services.Customers.Responses;
+using Services.Products.Handlers;
+using Services.Products.Requests;
+using Services.Products.Responses;
 using System.Reflection;
 
 namespace AulaAPI
@@ -31,21 +35,14 @@ namespace AulaAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMediatR(Assembly.GetExecutingAssembly());
+            services.AddMediatR(typeof(CreateUserHandler));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Aula Avançada - API", Version = "v1", });
             });
 
-            services.AddTransient<ICustomerRepository, CustomerRepository>();
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddDbContext<ContextSQLite>(opt => opt.UseSqlite("name=ConexaoSqlite:SqliteConnectionString"));
-            
-            services.AddTransient<IRequestHandler<CustomerRequest, CustomerResponse>, CustomerHandler>();
-            services.AddTransient<IRequestHandler<CreateCustomerRequest, CreateCustomerResponse>, CreateCustomerHandler>();
-            services.AddTransient<IRequestHandler<CreateUserRequest, CreateUserResponse>, CreateUserHandler>();
-
+            AddDepencency(services);
 
 
             //Adicionado autenticacao JWT
@@ -65,6 +62,15 @@ namespace AulaAPI
                     ValidateAudience = false
                 };
             });
+        }
+
+        private static void AddDepencency(IServiceCollection services)
+        {
+            services.AddTransient<ICustomerRepository, CustomerRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddDbContext<ContextSQLite>(opt => opt.UseSqlite("name=ConexaoSqlite:SqliteConnectionString"));
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

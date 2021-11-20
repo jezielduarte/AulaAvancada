@@ -1,8 +1,5 @@
 ﻿using Domain.Entity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Data.SqLite
 {
@@ -14,6 +11,12 @@ namespace Data.SqLite
         }
 
         public DbSet<Customer> Customers { get; set; }
+
+        public DbSet<Order> Orders { get; set; }
+
+        public DbSet<OrderItem> OrderItems { get; set; }
+
+        public DbSet<Product> Product { get; set; }
 
         public DbSet<User> Users { get; set; }
 
