@@ -2,21 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Domain.Repository
 {
     public interface ICustomerRepository
     {
-        void Save(Customer customer);
+        Task SaveAsync(Customer customer);
 
-        void Update(Customer customer);
+        Task UpdateAsync(Customer customer);
 
-        Customer GetById(Guid id);
+        Task<Customer> GetByIdAsync(Guid id);
 
-        List<Customer> GetAll(Func<Customer, bool> predicate);
+        Task<List<Customer>> GetAllAsync(Func<Customer, bool> predicate);
 
-        List<Customer> GetAll();
+        Task<List<Customer>> GetAllAsync();
 
-        List<Customer> GetByName(string name, int page, int itensPerPage);
+        Task<List<Customer>> GetByNameAsync(string name, int page, int itensPerPage);
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Data.Repository
 {
@@ -17,33 +18,33 @@ namespace Data.Repository
             _context = context;
         }
 
-        public List<Customer> GetAll(Func<Customer, bool> predicate)
+        public async Task<List<Customer>> GetAllAsync(Func<Customer, bool> predicate)
         {
-            return _context.Customers.Where(predicate).ToList();
+            return await Task.FromResult(_context.Customers.Where(predicate).ToList());
         }
 
-        public List<Customer> GetAll()
+        public async Task<List<Customer>> GetAllAsync()
         {
             return _context.Customers.ToList();
         }
 
-        public Customer GetById(Guid id)
+        public async Task<Customer> GetByIdAsync(Guid id)
         {
             return _context.Customers.Find(id);
         }
 
-        public List<Customer> GetByName(string name, int page, int itensPerPage)
+        public async Task<List<Customer>> GetByNameAsync(string name, int page, int itensPerPage)
         {
             return _context.Customers.Where(x => x.Name.Contains(name)).Skip(itensPerPage * (page - 1)).Take(itensPerPage).ToList();
         }
 
-        public void Save(Customer customer)
+        public async Task SaveAsync(Customer customer)
         {
             _context.Customers.Add(customer);
             _context.SaveChanges();
         }
 
-        public void Update(Customer customer)
+        public async Task UpdateAsync(Customer customer)
         {
             _context.Customers.Update(customer);
             _context.SaveChanges();

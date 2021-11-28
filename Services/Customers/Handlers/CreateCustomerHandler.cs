@@ -14,14 +14,14 @@ namespace Services.Customers.Handlers
 {
     public class CreateCustomerHandler : IRequestHandler<CreateCustomerRequest, CreateCustomerResponse>
     {
-        ICustomerRepository _repository;
+        readonly ICustomerRepository _repository;
 
         public CreateCustomerHandler(ICustomerRepository repository)
         {
             _repository = repository;
         }
 
-        public Task<CreateCustomerResponse> Handle(CreateCustomerRequest request, CancellationToken cancellationToken)
+        public async Task<CreateCustomerResponse> Handle(CreateCustomerRequest request, CancellationToken cancellationToken)
         {
             Customer customer = new Customer(request.Name, request.City, request.PostCod);
             customer.ReleaseSave();
@@ -33,19 +33,36 @@ namespace Services.Customers.Handlers
                     Message = "error for create",
                     StatusCode = 400
                 };
-                return Task.FromResult(response);
+                return response;
             }
             else
             {
                 try
                 {
-                    _repository.Save(customer);
+                    await Task.Run(() =>
+                    {
+                        _repository.SaveAsync(customer);
+                        _repository.SaveAsync(customer);
+                        _repository.SaveAsync(customer);
+                        _repository.SaveAsync(customer);
+                        _repository.SaveAsync(customer);
+                    });
+
+                    await Task.Run(() =>
+                    {
+                        _repository.SaveAsync(customer);
+                        _repository.SaveAsync(customer);
+                        _repository.SaveAsync(customer);
+                        _repository.SaveAsync(customer);
+                        _repository.SaveAsync(customer);
+                    });
+
                     CreateCustomerResponse response = new CreateCustomerResponse
                     {
                         Message = "Customer saved success",
                         StatusCode = 200
                     };
-                    return Task.FromResult(response);
+                    return response;
                 }
                 catch (Exception ex)
                 {
@@ -54,7 +71,7 @@ namespace Services.Customers.Handlers
                         Message = ex.Message,
                         StatusCode = 500
                     };
-                    return Task.FromResult(response);
+                    return response;
                 }
             }
         }

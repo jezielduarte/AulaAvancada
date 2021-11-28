@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Customers.Requests;
 using System;
-
+using System.Threading.Tasks;
 
 namespace AulaAPI.Controllers
 {
@@ -22,10 +22,10 @@ namespace AulaAPI.Controllers
         [HttpGet]
         [Authorize(Roles = nameof(Domain.Entity.User.CreateCustomer))]
         [Authorize(Roles = nameof(Domain.Entity.User.DeleteCustomer))] //1 e outro
-        public IActionResult Get([FromQuery] CustomerRequest request)
+        public async Task<IActionResult> Get([FromQuery] CustomerRequest request)
         {
             var response = _mediator.Send(request);
-            return Ok(response);
+            return Ok(await Task.FromResult(response));
         }
 
         [HttpPost]

@@ -14,12 +14,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Services.Customers.Handlers;
-using Services.Customers.Requests;
-using Services.Customers.Responses;
-using Services.Products.Handlers;
-using Services.Products.Requests;
-using Services.Products.Responses;
-using System.Reflection;
 
 namespace AulaAPI
 {
@@ -36,6 +30,7 @@ namespace AulaAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMediatR(typeof(CreateUserHandler));
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -69,6 +64,7 @@ namespace AulaAPI
             services.AddTransient<ICustomerRepository, CustomerRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddDbContext<ContextSQLite>(opt => opt.UseSqlite("name=ConexaoSqlite:SqliteConnectionString"));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
         }

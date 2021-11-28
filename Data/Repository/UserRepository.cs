@@ -1,6 +1,7 @@
 ﻿using Data.SqLite;
 using Domain.Entity;
 using Domain.Repository;
+using System.Threading.Tasks;
 
 namespace Data.Repository
 {
@@ -13,10 +14,10 @@ namespace Data.Repository
             _context = context;
         }
 
-        public void Save(User user)
+        public async Task SaveAsync(User user)
         {
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            await _context.Users.AddAsync(user).AsTask();
+            await _context.SaveChangesAsync();
         }
     }
 }

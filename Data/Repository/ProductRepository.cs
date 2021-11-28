@@ -4,6 +4,7 @@ using Domain.Repository;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Data.Repository
 {
@@ -15,10 +16,10 @@ namespace Data.Repository
         {
             _context = context;
         }
-        public void Save(Product product)
+        public async Task SaveAsync(Product product)
         {
             _context.Product.Add(product);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }
