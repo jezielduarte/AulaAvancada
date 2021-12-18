@@ -1,5 +1,4 @@
 ﻿using Data.UnityOfWork;
-using Domain.Entity;
 using Domain.Repository;
 using MediatR;
 using Services.Products.Requests;
@@ -26,13 +25,13 @@ namespace Services.Products.Handlers
 
         public Task<CreateProductResponse> Handle(CreateProductRequest request, CancellationToken cancellationToken)
         {
-            Product Product = new Product(request.Reference, request.Description, request.Price);
-            Product.ReleaseSave();
-            if (Product.HasErrors)
+            Domain.Entity.Product product = new Domain.Entity.Product(request.Reference, request.Description, request.Price);
+            product.ReleaseSave();
+            if (product.HasErrors)
             {
                 CreateProductResponse response = new CreateProductResponse
                 {
-                    Erros = Product.Errors,
+                    Erros = product.Errors,
                     Message = "error for create",
                     StatusCode = 400
                 };
@@ -44,13 +43,13 @@ namespace Services.Products.Handlers
                 {
                     _unitOfWork.BeginTransaction();
 
-                    _repository.Save(Product);
+                    _repository.SaveAsync(product);
 
                     _unitOfWork.Commit();
 
                     CreateProductResponse response = new CreateProductResponse
                     {
-                        ProductId = Product.Id,
+                        ProductId = product.Id,
                         Message = "Product saved success",
                         StatusCode = 200
                     };

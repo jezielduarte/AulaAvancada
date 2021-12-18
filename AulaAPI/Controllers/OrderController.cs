@@ -9,7 +9,6 @@ namespace AulaAPI.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-    [Authorize]
     public class OrderController : ControllerBase
     {
 

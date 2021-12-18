@@ -7,6 +7,10 @@ namespace Domain.Entity
 {
     public class Order
     {
+        public Order()
+        {
+            Errors = new List<BrokenRoles>();
+        }
         public Guid Id { get; private set; }
 
         public DateTime Date { get; private set; }

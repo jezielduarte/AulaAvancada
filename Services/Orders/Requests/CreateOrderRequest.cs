@@ -1,13 +1,21 @@
-﻿using MediatR;
+﻿using FluentValidation.Results;
+using MediatR;
+using Services.Customers.Requests;
 using Services.Orders.Responses;
+using Services.Orders.Validations;
 using System.Collections.Generic;
 
 namespace Services.Orders.Requests
 {
     public class CreateOrderRequest : IRequest<CreateOrderResponse>
     {
-        public CreateOrderRequestCustomer CreateOrderRequestCustomer { get; set; }
+        public CreateCustomerRequest Customer { get; set; }
         public List<CreateOrderRequestItem> Items { get; set; }
+
+        public ValidationResult Validate()
+        {
+            return new CreateOrderValidator().Validate(this);
+        }
     }
 
     public class CreateOrderRequestItem
@@ -17,12 +25,4 @@ namespace Services.Orders.Requests
         public int Quantity { get; set; }
     }
 
-    public class CreateOrderRequestCustomer
-    {
-        public string Name { get; set; }
-
-        public string City { get; set; }
-
-        public string PostCod { get; set; }
-    }
 }

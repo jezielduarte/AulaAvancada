@@ -39,7 +39,7 @@ namespace Services.Orders.Handlers
             {
                 try
                 {
-                    _repository.Save(customer);
+                    _repository.SaveAsync(customer);
                     CreateOrderResponse response = new CreateOrderResponse
                     {
                         Message = "Order saved success",

@@ -3,6 +3,7 @@ using Data.Repository;
 using Data.SqLite;
 using Data.UnityOfWork;
 using Domain.Repository;
+using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Services.Customers.Handlers;
+
 
 namespace AulaAPI
 {
@@ -31,7 +33,8 @@ namespace AulaAPI
         {
             services.AddMediatR(typeof(CreateUserHandler));
 
-            services.AddControllers();
+            services.AddControllers().AddFluentValidation(config=> config.RegisterValidatorsFromAssemblyContaining(typeof(CreateUserHandler)));
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Aula Avançada - API", Version = "v1", });

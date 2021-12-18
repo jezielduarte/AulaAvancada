@@ -2,7 +2,6 @@
 using MediatR;
 using Services.Customers.Requests;
 using Services.Customers.Responses;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +19,9 @@ namespace Services.Customers.Handlers
             _repository = repository;
         }
 
-        public Task<CustomerResponse> Handle(CustomerRequest request, CancellationToken cancellationToken)
+        public async Task<CustomerResponse> Handle(CustomerRequest request, CancellationToken cancellationToken)
         {
-            List<Domain.Entity.Customer> customers = _repository.GetByName(request.Name, request.Page, request.ItensPerPage);
+            List<Domain.Entity.Customer> customers = await _repository.GetByNameAsync(request.Name, request.Page, request.ItensPerPage);
 
             CustomerResponse response = new CustomerResponse
             {
@@ -31,7 +30,7 @@ namespace Services.Customers.Handlers
                 PerPage = 20,
                 LastPage = 10
             };
-            return Task.FromResult(response);
+            return response;
         }
     }
 }

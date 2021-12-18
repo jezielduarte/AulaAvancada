@@ -36,7 +36,7 @@ namespace Services.Customers.Handlers
             {
                 try
                 {
-                    _repository.Save(user);
+                    _repository.SaveAsync(user);
                     CreateUserResponse response = new CreateUserResponse
                     {
                         Message = "User saved success",

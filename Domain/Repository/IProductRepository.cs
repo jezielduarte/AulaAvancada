@@ -9,5 +9,6 @@ namespace Domain.Repository
     public interface IProductRepository
     {
         Task SaveAsync(Product product);
+        bool Exist(string reference);
     }
 }

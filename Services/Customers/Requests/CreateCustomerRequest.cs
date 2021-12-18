@@ -10,5 +10,6 @@ namespace Services.Customers.Requests
         public string City { get; set; }
 
         public string PostCod { get; set; }
+
     }
 }
