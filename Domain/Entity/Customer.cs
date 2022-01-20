@@ -32,6 +32,16 @@ namespace Domain.Entity
         [NotMapped]
         public Boolean HasErrors => Errors.Count > 0;
 
+        public void SetAderess(string city, string postCode)
+        {
+            City = city;
+            PostCod = postCode;
+        }
+        public void SetName(string name)
+        {
+            Name = name;
+        }
+
         public void AddError(string property, string description)
         {
             BrokenRoles erro = new BrokenRoles(property, description, TypeValidator.ERROR);
@@ -49,6 +59,14 @@ namespace Domain.Entity
 
         }
         public void ReleaseUpdate()
+        {
+            if (string.IsNullOrEmpty(Name))
+                AddError(nameof(Name), "name can not null");
+
+            if (Name.Length < 3)
+                AddError(nameof(Name), "put at least 3 characters");
+        }
+        public void ReleaseRemove()
         {
             if (string.IsNullOrEmpty(Name))
                 AddError(nameof(Name), "name can not null");

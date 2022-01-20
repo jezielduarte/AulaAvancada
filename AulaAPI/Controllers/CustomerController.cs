@@ -35,5 +35,21 @@ namespace AulaAPI.Controllers
             var response = _mediator.Send(request).Result;
             return StatusCode(response.StatusCode, response);
         }
+        [HttpPut]
+        [Authorize(Roles = nameof(Domain.Entity.User.CreateCustomer) + "," + nameof(Domain.Entity.User.CreateCustomer))] // 1 ou outro
+        public async Task<IActionResult> Put([FromRoute] Guid id, [FromBody] UpdateCustomerRequest request)
+        {
+            request.SetId(id);
+            var response = await _mediator.Send(request);
+            return StatusCode(response.StatusCode, response);
+        }
+        [HttpDelete]
+        [Authorize(Roles = nameof(Domain.Entity.User.CreateCustomer) + "," + nameof(Domain.Entity.User.CreateCustomer))] // 1 ou outro
+        public IActionResult Delete([FromRoute] Guid id, [FromBody] DeleteCustomerRequest request)
+        {
+            var response = _mediator.Send(request).Result;
+            return StatusCode(response.StatusCode, response);
+        }
+
     }
 }

@@ -11,6 +11,7 @@ namespace Domain.Repository
         Task SaveAsync(Customer customer);
 
         Task UpdateAsync(Customer customer);
+        Task RemoveAsync(Customer customer);
 
         Task<Customer> GetByIdAsync(Guid id);
 

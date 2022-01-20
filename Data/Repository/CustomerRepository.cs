@@ -25,29 +25,34 @@ namespace Data.Repository
 
         public async Task<List<Customer>> GetAllAsync()
         {
-            return _context.Customers.ToList();
+            return await Task.FromResult(_context.Customers.ToList());
         }
 
         public async Task<Customer> GetByIdAsync(Guid id)
         {
-            return _context.Customers.Find(id);
+            return await Task.FromResult(_context.Customers.Find(id));
         }
 
         public async Task<List<Customer>> GetByNameAsync(string name, int page, int itensPerPage)
         {
-            return _context.Customers.Where(x => x.Name.Contains(name)).Skip(itensPerPage * (page - 1)).Take(itensPerPage).ToList();
+            return await Task.FromResult(_context.Customers.Where(x => x.Name.Contains(name)).Skip(itensPerPage * (page - 1)).Take(itensPerPage).ToList());
         }
 
         public async Task SaveAsync(Customer customer)
         {
             _context.Customers.Add(customer);
-            _context.SaveChanges();
+           _context.SaveChanges();
         }
 
         public async Task UpdateAsync(Customer customer)
         {
             _context.Customers.Update(customer);
-            _context.SaveChanges();
+            await Task.FromResult(_context.SaveChanges());
+        }
+        public async Task RemoveAsync(Customer customer)
+        {
+            _context.Customers.Remove(customer);
+            await Task.FromResult(_context.SaveChanges());
         }
     }
 }
