@@ -1,4 +1,5 @@
-﻿using Domain.Repository;
+﻿using Data.UnityOfWork;
+using Domain.Repository;
 using MediatR;
 using Services.Customers.Requests;
 using Services.Customers.Responses;
@@ -12,11 +13,13 @@ namespace Services.Customers.Handlers
 {
     public class CustomerHandler : IRequestHandler<CustomerRequest, CustomerResponse>
     {
-        ICustomerRepository _repository;
+       readonly ICustomerRepository _repository;
+       
 
-        public CustomerHandler(ICustomerRepository repository)
+        public CustomerHandler(ICustomerRepository repository, IUnitOfWork unitOfW)
         {
             _repository = repository;
+           
         }
 
         public async Task<CustomerResponse> Handle(CustomerRequest request, CancellationToken cancellationToken)

@@ -45,10 +45,10 @@ namespace AulaAPI.Controllers
         }
         [HttpDelete]
         [Authorize(Roles = nameof(Domain.Entity.User.CreateCustomer) + "," + nameof(Domain.Entity.User.CreateCustomer))] // 1 ou outro
-        public IActionResult Delete([FromRoute] Guid id, [FromBody] DeleteCustomerRequest request)
+        public  IActionResult Remove([FromRoute] Guid id, [FromBody] DeleteCustomerRequest request)
         {
-            var response = _mediator.Send(request).Result;
-            return StatusCode(response.StatusCode, response);
+            var response = _mediator.Send(request);
+            return Ok(Task.FromResult(response));
         }
 
     }

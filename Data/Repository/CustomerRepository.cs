@@ -41,7 +41,7 @@ namespace Data.Repository
         public async Task SaveAsync(Customer customer)
         {
             _context.Customers.Add(customer);
-           _context.SaveChanges();
+          await Task.FromResult( _context.SaveChanges());
         }
 
         public async Task UpdateAsync(Customer customer)

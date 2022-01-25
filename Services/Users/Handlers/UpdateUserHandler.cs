@@ -2,61 +2,62 @@
 using Domain.Entity;
 using Domain.Repository;
 using MediatR;
-using Services.Customers.Requests;
-using Services.Customers.Responses;
+using Services.Users.Requests;
+using Services.Users.Responses;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Services.Customers.Handlers
+namespace Services.Users.Handlers
 {
-    public class CreateUserHandler : IRequestHandler<CreateUserRequest, CreateUserResponse>
+    public class UpdateUserHandler : IRequestHandler<UpdateUserRequest, UpdateUserResponse>
     {
-        IUserRepository _repository;
+        readonly IUserRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public CreateUserHandler(IUserRepository repository, IUnitOfWork unitOfWork)
+        public UpdateUserHandler(IUserRepository respository, IUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _repository = respository;
             _unitOfWork = unitOfWork;
         }
 
-        public Task<CreateUserResponse> Handle(CreateUserRequest request, CancellationToken cancellationToken)
+        public async Task<UpdateUserResponse> Handle(UpdateUserRequest request, CancellationToken cancellationToken)
         {
-            User user = new User(request.Login, request.Pass, request.CreateCustomer, request.UpdateCustomer, request.DeleteCustomer);
-            user.ReleaseSave();
+            User user = await _repository.GetByIdAsync(request.Id);
+            user.SetLogin(request.Login, request.Pass);
+            user.ReleaseUpdate();
             if (user.HasErrors)
             {
-                CreateUserResponse response = new CreateUserResponse
+                UpdateUserResponse response = new UpdateUserResponse
                 {
                     Erros = user.Errors,
                     Message = "error for create",
                     StatusCode = 400
                 };
-                return Task.FromResult(response);
+                return response;
             }
             else
             {
                 try
                 {
                     _unitOfWork.BeginTransaction();
-                    _repository.SaveAsync(user);
+                    await _repository.SaveAsync(user);
                     _unitOfWork.Commit();
-                    CreateUserResponse response = new CreateUserResponse
+                    UpdateUserResponse response = new UpdateUserResponse
                     {
                         Message = "User saved success",
                         StatusCode = 200
                     };
-                    return Task.FromResult(response);
+                    return await Task.FromResult(response);
                 }
                 catch (Exception ex)
                 {
-                    CreateUserResponse response = new CreateUserResponse
+                    UpdateUserResponse response = new UpdateUserResponse
                     {
                         Message = ex.Message,
                         StatusCode = 500
                     };
-                    return Task.FromResult(response);
+                    return  await Task.FromResult(response);
                 }
             }
         }

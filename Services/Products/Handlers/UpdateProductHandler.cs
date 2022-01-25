@@ -1,37 +1,34 @@
 ﻿using Data.UnityOfWork;
-using Domain.Entity;
 using Domain.Repository;
 using MediatR;
-using Services.Customers.Requests;
-using Services.Customers.Responses;
+using Services.Products.Requests;
+using Services.Products.Responses;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Services.Customers.Handlers
+namespace Services.Products.Handlers
 {
-    public class UpdateCustomerHandler : IRequestHandler<UpdateCustomerRequest, UpdateCustommerResponse>
+    public class UpdateProductHandler : IRequestHandler<UpdateProductRequest, UpdateProductResponse>
     {
-        readonly ICustomerRepository _repository;
+        readonly IProductRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
-
-        public UpdateCustomerHandler(ICustomerRepository repository, IUnitOfWork unitOfWork)
+        public UpdateProductHandler(IProductRepository repository, IUnitOfWork unitOfWork)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<UpdateCustommerResponse> Handle(UpdateCustomerRequest request, CancellationToken cancellationToken)
+        public async Task<UpdateProductResponse> Handle(UpdateProductRequest request, CancellationToken cancellationToken)
         {
-            Customer customer = await _repository.GetByIdAsync(request.Id);
-            customer.SetAderess(request.City, request.PostCod);
-            customer.SetName(request.Name);
-            customer.ReleaseUpdate();
-            if (customer.HasErrors)
+            Domain.Entity.Product product =  await _repository.GetByIdAsync(request.Id);
+            product.SetProduct(request.Description,decimal.Parse(request.Price));
+            product.ReleaseUpdate();
+            if (product.HasErrors)
             {
-                UpdateCustommerResponse response = new UpdateCustommerResponse
+                UpdateProductResponse response = new UpdateProductResponse
                 {
-                    Erros = customer.Errors,
+                    Erros = product.Errors,
                     Message = "error for create",
                     StatusCode = 400
                 };
@@ -42,9 +39,9 @@ namespace Services.Customers.Handlers
                 try
                 {
                     _unitOfWork.BeginTransaction();
-                    await _repository.SaveAsync(customer);
+                    await _repository.SaveAsync(product);
                     _unitOfWork.Commit();
-                    UpdateCustommerResponse response = new UpdateCustommerResponse
+                    UpdateProductResponse response = new UpdateProductResponse
                     {
                         Message = "User saved success",
                         StatusCode = 200
@@ -53,7 +50,7 @@ namespace Services.Customers.Handlers
                 }
                 catch (Exception ex)
                 {
-                    UpdateCustommerResponse response = new UpdateCustommerResponse
+                    UpdateProductResponse response = new UpdateProductResponse
                     {
                         Message = ex.Message,
                         StatusCode = 500
@@ -61,7 +58,6 @@ namespace Services.Customers.Handlers
                     return await Task.FromResult(response);
                 }
             }
-        } 
-        
+        }
     }
 }

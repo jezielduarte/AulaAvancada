@@ -37,6 +37,12 @@ namespace Domain.Entity
         [NotMapped]
         public Boolean HasErrors => Errors.Count > 0;
 
+        public void SetLogin(string login, string pass)
+        {
+            Login = login;
+            Pass = pass;
+        }
+
         public void AddError(string property, string description)
         {
             BrokenRoles erro = new BrokenRoles(property, description, TypeValidator.ERROR);
@@ -52,6 +58,22 @@ namespace Domain.Entity
             if (Login.Length < 3)
                 AddError(nameof(Login), "put at least 3 characters");
 
+        }
+        public void ReleaseUpdate()
+        {
+            if (string.IsNullOrEmpty(Login))
+                AddError(nameof(Login), "login can not null");
+
+            if (Login.Length < 3)
+                AddError(nameof(Login), "put at least 3 characters");
+        }
+        public void ReleaseRemove()
+        {
+            if (string.IsNullOrEmpty(Login))
+                AddError(nameof(Login), "login can not null");
+
+            if (Login.Length < 3)
+                AddError(nameof(Login), "put at least 3 characters");
         }
     }
 

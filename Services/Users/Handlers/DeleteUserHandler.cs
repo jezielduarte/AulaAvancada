@@ -2,39 +2,36 @@
 using Domain.Entity;
 using Domain.Repository;
 using MediatR;
-using Services.Customers.Requests;
-using Services.Customers.Responses;
+using Services.Users.Requests;
+using Services.Users.Responses;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Services.Customers.Handlers
+namespace Services.Users.Handlers
 {
-    public class DeleteCustomerHandler : IRequestHandler<DeleteCustomerRequest, DeleteCustomerResponse>
+    public class DeleteUserHandler : IRequestHandler<DeleteUserRequest, DeleteUserResponse>
     {
-        readonly ICustomerRepository _repository;
+        readonly IUserRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public DeleteCustomerHandler(ICustomerRepository repository, IUnitOfWork unitOfWork)
+        public DeleteUserHandler(IUserRepository repository)
         {
             _repository = repository;
-            _unitOfWork = unitOfWork;
         }
 
-        public async Task<DeleteCustomerResponse> Handle(DeleteCustomerRequest request, CancellationToken cancellationToken)
+        public async Task<DeleteUserResponse> Handle(DeleteUserRequest request, CancellationToken cancellationToken)
         {
-            Customer customer = await _repository.GetByIdAsync(request.Id);
-           
-            //customer.SetAderess(request.City, request.PostCod);
-            //customer.SetName(request.Name);
-            customer.ReleaseRemove();
-            if (customer.HasErrors)
+            User user = await _repository.GetByIdAsync(request.Id);
+            user.ReleaseRemove ();
+
+            if (user.HasErrors)
             {
-                DeleteCustomerResponse response = new DeleteCustomerResponse
+                DeleteUserResponse response = new DeleteUserResponse
                 {
-                    Erros = customer.Errors,
+                    Erros = user.Errors,
                     Message = "error for create",
                     StatusCode = 400
                 };
@@ -45,9 +42,9 @@ namespace Services.Customers.Handlers
                 try
                 {
                     _unitOfWork.BeginTransaction();
-                    await _repository.SaveAsync(customer);
+                    await _repository.SaveAsync(user);
                     _unitOfWork.Commit();
-                    DeleteCustomerResponse response = new DeleteCustomerResponse
+                    DeleteUserResponse response = new DeleteUserResponse
                     {
                         Message = "User saved success",
                         StatusCode = 200
@@ -56,7 +53,7 @@ namespace Services.Customers.Handlers
                 }
                 catch (Exception ex)
                 {
-                    DeleteCustomerResponse response = new DeleteCustomerResponse
+                    DeleteUserResponse response = new DeleteUserResponse
                     {
                         Message = ex.Message,
                         StatusCode = 500
@@ -67,4 +64,3 @@ namespace Services.Customers.Handlers
         }
     }
 }
-

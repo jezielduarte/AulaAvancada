@@ -1,4 +1,5 @@
-﻿using Domain.Entity;
+﻿using Data.UnityOfWork;
+using Domain.Entity;
 using Domain.Repository;
 using MediatR;
 using Services.Customers.Requests;
@@ -15,10 +16,12 @@ namespace Services.Customers.Handlers
     public class CreateCustomerHandler : IRequestHandler<CreateCustomerRequest, CreateCustomerResponse>
     {
         readonly ICustomerRepository _repository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateCustomerHandler(ICustomerRepository repository)
+        public CreateCustomerHandler(ICustomerRepository repository, IUnitOfWork unitOfWork)
         {
             _repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<CreateCustomerResponse> Handle(CreateCustomerRequest request, CancellationToken cancellationToken)
@@ -39,27 +42,12 @@ namespace Services.Customers.Handlers
             {
                 try
                 {
-                    await Task.Run(() =>
-                    {
-                        _repository.SaveAsync(customer);
-                        _repository.SaveAsync(customer);
-                        _repository.SaveAsync(customer);
-                        _repository.SaveAsync(customer);
-                        _repository.SaveAsync(customer);
-                    });
-
-                    await Task.Run(() =>
-                    {
-                        _repository.SaveAsync(customer);
-                        _repository.SaveAsync(customer);
-                        _repository.SaveAsync(customer);
-                        _repository.SaveAsync(customer);
-                        _repository.SaveAsync(customer);
-                    });
-
+                    _unitOfWork.BeginTransaction();
+                    await _repository.SaveAsync(customer);
+                    _unitOfWork.Commit();
                     CreateCustomerResponse response = new CreateCustomerResponse
                     {
-                        Message = "Customer saved success",
+                        Message = "Order saved success",
                         StatusCode = 200
                     };
                     return response;

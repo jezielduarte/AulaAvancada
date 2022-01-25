@@ -10,5 +10,16 @@ namespace Domain.Repository
     {
         Task SaveAsync(Product product);
         bool Exist(string reference);
+
+        Task UpdateAsync(Product product);
+        Task RemoveAsync(Product product);
+
+        Task<Product> GetByIdAsync(Guid id);
+
+        Task<List<Product>> GetAllAsync(Func<Product, bool> predicate);
+
+        Task<List<Product>> GetAllAsync();
+
+        Task<List<Product>> GetByNameAsync(string name, int page, int itensPerPage);
     }
 }

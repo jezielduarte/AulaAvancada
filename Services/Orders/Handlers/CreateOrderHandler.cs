@@ -1,4 +1,5 @@
-﻿using Domain.Entity;
+﻿using Data.UnityOfWork;
+using Domain.Entity;
 using Domain.Repository;
 using MediatR;
 using Services.Orders.Requests;
@@ -15,21 +16,23 @@ namespace Services.Orders.Handlers
     public class CreateOrderHandler : IRequestHandler<CreateOrderRequest, CreateOrderResponse>
     {
         readonly IOrderRepository _repository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateOrderHandler(IOrderRepository repository)
+        public CreateOrderHandler(IOrderRepository repository, IUnitOfWork unitOfWork)
         {
             _repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         public Task<CreateOrderResponse> Handle(CreateOrderRequest request, CancellationToken cancellationToken)
         {
-            Order customer = new Order();
-            customer.ReleaseSave();
-            if (customer.HasErrors)
+            Order order = new Order();
+            order.ReleaseSave();
+            if (order.HasErrors)
             {
                 CreateOrderResponse response = new CreateOrderResponse
                 {
-                    Erros = customer.Errors,
+                    Erros = order.Errors,
                     Message = "error for create",
                     StatusCode = 400
                 };
@@ -39,7 +42,9 @@ namespace Services.Orders.Handlers
             {
                 try
                 {
-                    _repository.SaveAsync(customer);
+                    _unitOfWork.BeginTransaction();
+                    _repository.SaveAsync(order);
+                    _unitOfWork.Commit();
                     CreateOrderResponse response = new CreateOrderResponse
                     {
                         Message = "Order saved success",

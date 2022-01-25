@@ -28,6 +28,12 @@ namespace Domain.Entity
         [NotMapped]
         public Boolean HasErrors => Errors.Count > 0;
 
+        public void SetProduct(string description, decimal price)
+        {
+            Decription = description;
+            Price = price;
+        }
+
         public void AddError(string property, string description)
         {
             BrokenRoles erro = new BrokenRoles(property, description, TypeValidator.ERROR);
@@ -37,12 +43,28 @@ namespace Domain.Entity
         public void ReleaseSave()
         {
 
-            //if (string.IsNullOrEmpty(Name))
-            //    AddError(nameof(Name), "name can not null");
+            if (string.IsNullOrEmpty(Reference))
+                AddError(nameof(Reference), "Reference can not null");
 
-            //if (Name.Length < 3)
-            //    AddError(nameof(Name), "put at least 3 characters");
+            if (Reference.Length < 3)
+                AddError(nameof(Reference), "put at least 3 characters");
 
+        }
+        public void ReleaseUpdate()
+        {
+            if (string.IsNullOrEmpty(Reference))
+                AddError(nameof(Reference), "Reference can not null");
+
+            if (Reference.Length < 3)
+                AddError(nameof(Reference), "put at least 3 characters");
+        }
+        public void ReleaseRemove()
+        {
+            if (string.IsNullOrEmpty(Reference))
+                AddError(nameof(Reference), "Reference can not null");
+
+            if (Reference.Length < 3)
+                AddError(nameof(Reference), "put at least 3 characters");
         }
 
     }
